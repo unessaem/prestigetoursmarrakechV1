@@ -10,8 +10,8 @@ export const site = {
 
   // ---- Contact -------------------------------------------------
   // Numéro WhatsApp au format international SANS "+" ni espaces.
-  whatsapp: "212600000000",
-  phoneDisplay: "+212 6 00 00 00 00",
+  whatsapp: "212660753507",
+  phoneDisplay: "+212 6 60 75 35 07",
   email: "contact@prestigetoursmarrakech.com",
   city: { fr: "Marrakech, Maroc", en: "Marrakech, Morocco" },
   address: "Marrakech 40000, Maroc",
