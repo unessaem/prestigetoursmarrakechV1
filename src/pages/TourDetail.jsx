@@ -6,6 +6,7 @@ import tours, { getTour, included, notIncluded } from "../data/tours";
 import { path } from "../lib/routes";
 import SmartImage from "../components/SmartImage";
 import TourCard from "../components/TourCard";
+import { TRANSFER_SLUG } from "../components/QuoteModal";
 import { ArrowLeft, Check, Clock, Minus, Pin, Users, WhatsApp } from "../components/Icons";
 
 export default function TourDetail() {
@@ -180,50 +181,79 @@ export default function TourDetail() {
             <aside className="lg:sticky lg:top-28 lg:h-fit">
               <div className="rounded-3xl border border-sand-200 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-night-900">
                 <h2 className="font-display text-xl font-bold">{t.detail.priceTitle}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-sand-700 dark:text-sand-300">{t.detail.priceLead}</p>
+                <p className="mt-2 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
+                  {tour.slug === TRANSFER_SLUG ? t.transfer.priceLead : t.detail.priceLead}
+                </p>
 
                 <div className="mt-4 rounded-2xl bg-clay-600/10 p-4 dark:bg-white/5">
                   <p className="font-display text-3xl font-bold text-clay-700 dark:text-clay-200">
                     {tour.price ? `${tour.price} ${site.currency}` : t.tours.onRequest}
                   </p>
                   <p className="mt-1 text-xs leading-relaxed text-sand-700 dark:text-sand-300">
-                    {tour.priceNote ? tour.priceNote[lang] : t.detail.priceBase}
+                    {tour.priceNote
+                      ? tour.priceNote[lang]
+                      : tour.slug === TRANSFER_SLUG
+                        ? t.transfer.priceBase
+                        : t.detail.priceBase}
                   </p>
                 </div>
 
-                <div className="mt-5 space-y-4">
-                  <div>
-                    <label className={label} htmlFor="d-people">
-                      {t.detail.selectPeople}
-                    </label>
-                    <input
-                      id="d-people"
-                      type="number"
-                      min="1"
-                      max="20"
-                      className={field}
-                      value={people}
-                      onChange={(e) => setPeople(e.target.value)}
-                    />
+                {tour.slug === TRANSFER_SLUG ? (
+                  // Transfert : le client choisit d'abord son sens de trajet, le
+                  // formulaire dédié s'ouvre ensuite avec ce sens déjà sélectionné.
+                  <div className="mt-5 space-y-2.5">
+                    <button
+                      onClick={() => openQuote({ ...tour, direction: "toHotel" })}
+                      className="btn-whatsapp w-full"
+                    >
+                      <WhatsApp className="h-5 w-5" />
+                      {t.transfer.bookArrival}
+                    </button>
+                    <button
+                      onClick={() => openQuote({ ...tour, direction: "toAirport" })}
+                      className="btn-whatsapp w-full"
+                    >
+                      <WhatsApp className="h-5 w-5" />
+                      {t.transfer.bookDeparture}
+                    </button>
                   </div>
-                  <div>
-                    <label className={label} htmlFor="d-date">
-                      {t.detail.date}
-                    </label>
-                    <input
-                      id="d-date"
-                      type="date"
-                      className={field}
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
-                  </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="mt-5 space-y-4">
+                      <div>
+                        <label className={label} htmlFor="d-people">
+                          {t.detail.selectPeople}
+                        </label>
+                        <input
+                          id="d-people"
+                          type="number"
+                          min="1"
+                          max="20"
+                          className={field}
+                          value={people}
+                          onChange={(e) => setPeople(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className={label} htmlFor="d-date">
+                          {t.detail.date}
+                        </label>
+                        <input
+                          id="d-date"
+                          type="date"
+                          className={field}
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                        />
+                      </div>
+                    </div>
 
-                <button onClick={() => openQuote(tour, people, date)} className="btn-whatsapp mt-5 w-full">
-                  <WhatsApp className="h-5 w-5" />
-                  {t.detail.bookNow}
-                </button>
+                    <button onClick={() => openQuote(tour, people, date)} className="btn-whatsapp mt-5 w-full">
+                      <WhatsApp className="h-5 w-5" />
+                      {t.detail.bookNow}
+                    </button>
+                  </>
+                )}
                 <Link to={path(lang, "contact")} className="btn-ghost mt-2.5 w-full">
                   {t.detail.askQuestion}
                 </Link>
